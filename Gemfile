@@ -3,7 +3,6 @@ gemspec
 
 gem "rake"
 gem "rake-compiler"
-gem "webrick"
 gem "test-unit"
 
 group :benchmark do
