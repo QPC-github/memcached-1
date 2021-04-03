@@ -49,12 +49,12 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
   class Error < RuntimeError
     attr_accessor :no_backtrace
 
-    def set_backtrace(*args)
-      @no_backtrace ? [] : super
+    def set_backtrace(*)
+      no_backtrace ? [] : super
     end
 
-    def backtrace(*args)
-      @no_backtrace ? [] : super
+    def backtrace(*)
+      no_backtrace ? [] : super
     end
   end
 

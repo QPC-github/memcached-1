@@ -1,7 +1,9 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'echoe', '>= 4.6.5'
+gem "rake"
+gem "rake-compiler"
+gem "test-unit"
 
 group :benchmark do
   gem "remix-stash", '~> 1.1.3'

@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../setup"
+require_relative '../setup.rb'
 
 $LOAD_PATH << "#{File.dirname(__FILE__)}/../../lib/"
 require 'memcached'

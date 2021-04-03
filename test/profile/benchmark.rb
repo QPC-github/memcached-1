@@ -119,21 +119,21 @@ class Bench
 
     # Us
     @clients.merge!({
-      "libm:ascii" => Memcached::Rails.new(
+      "libm:ascii" => Memcached.new(
         ['127.0.0.1:43042', '127.0.0.1:43043'],
-        :buffer_requests => false, :no_block => false, :namespace => "namespace"),
-      "libm:ascii:pipeline" => Memcached::Rails.new(
+        :buffer_requests => false, :no_block => false),
+      "libm:ascii:pipeline" => Memcached.new(
         ['127.0.0.1:43042', '127.0.0.1:43043'],
-        :no_block => true, :buffer_requests => true, :noreply => true, :namespace => "namespace"),
-      "libm:ascii:udp" => Memcached::Rails.new(
+        :no_block => true, :buffer_requests => true, :noreply => true),
+      "libm:ascii:udp" => Memcached.new(
         ["#{UNIX_SOCKET_NAME}0", "#{UNIX_SOCKET_NAME}1"],
-        :buffer_requests => false, :no_block => false, :namespace => "namespace"),
-      "libm:bin" => Memcached::Rails.new(
+        :buffer_requests => false, :no_block => false),
+      "libm:bin" => Memcached.new(
         ['127.0.0.1:43042', '127.0.0.1:43043'],
-        :buffer_requests => false, :no_block => false, :namespace => "namespace", :binary_protocol => true),
-      "libm:bin:buffer" => Memcached::Rails.new(
+        :buffer_requests => false, :no_block => false, :binary_protocol => true),
+      "libm:bin:buffer" => Memcached.new(
         ['127.0.0.1:43042', '127.0.0.1:43043'],
-        :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true)})
+        :no_block => true, :buffer_requests => true, :binary_protocol => true)})
   end
 
   def benchmark_clients(test_name, populate_keys = true)
@@ -176,7 +176,7 @@ class Bench
 
   def benchmark_hashes(hashes, test_name)
     hashes.each do |hash_name, int|
-      @m = Memcached::Rails.new(:hash => hash_name)
+      @m = Memcached.new(:hash => hash_name)
       @benchmark.report("#{test_name}:#{hash_name}") do
         (@loops * 5).times { yield int }
       end

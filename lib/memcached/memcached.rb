@@ -655,15 +655,6 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     set_behavior(:hash, options[:hash])
   end
 
-  # Set the SASL credentials from the current options. If credentials aren't provided, try to get them from the environment.
-  def set_credentials
-    if options[:credentials]
-      check_return_code(
-        Lib.memcached_set_sasl_auth_data(@struct, *options[:credentials])
-      )
-    end
-  end
-
   def is_unix_socket?(server)
     server.type == Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
   end

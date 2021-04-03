@@ -114,7 +114,7 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_options_are_frozen
-    assert_raise(TypeError, RuntimeError) do
+    assert_raise(FrozenError, TypeError, RuntimeError) do
       @cache.options[:no_block] = true
     end
   end
@@ -274,7 +274,7 @@ class MemcachedTest < Test::Unit::TestCase
   def test_get_missing
     @cache.delete key rescue nil
     assert_raise(Memcached::NotFound) do
-      result = @cache.get key
+      @cache.get key
     end
   end
 
@@ -292,21 +292,21 @@ class MemcachedTest < Test::Unit::TestCase
     cache = Memcached.new("localhost:43047:1", :timeout => 0.5, :exception_retry_limit => 0)
     assert 0.49 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
     cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5, :exception_retry_limit => 0)
     assert 0.49 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
     cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25, :exception_retry_limit => 0)
     assert 0.51 > (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
   ensure
@@ -318,14 +318,14 @@ class MemcachedTest < Test::Unit::TestCase
     cache = Memcached.new("localhost:43048:1", :no_block => true, :timeout => 0.25, :exception_retry_limit => 0)
     assert 0.24 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
     cache = Memcached.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001, :exception_retry_limit => 0)
     assert 0.24 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
@@ -336,7 +336,7 @@ class MemcachedTest < Test::Unit::TestCase
     )
     assert 0.24 > (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
@@ -946,7 +946,7 @@ class MemcachedTest < Test::Unit::TestCase
     end
 
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-      response = @cache.get([key])
+      @cache.get([key])
     end
   end
 
@@ -960,7 +960,7 @@ class MemcachedTest < Test::Unit::TestCase
     end
 
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-      response = @cache.get([key])
+      @cache.get([key])
     end
   end
 
@@ -993,21 +993,21 @@ class MemcachedTest < Test::Unit::TestCase
     @cache.get key, @value
     assert false # Never reached
   rescue Memcached::ABadKeyWasProvidedOrCharactersOutOfRange => e
-    assert_match /#{key}/, e.message
+    assert_match(/#{key}/, e.message)
   end
 
   def test_server_error_message
     @cache.set key, "I'm big" * 1000000
     assert false # Never reached
   rescue Memcached::ServerError => e
-    assert_match /^"object too large for cache". Key/, e.message
+    assert_match(/^"object too large for cache". Key/, e.message)
   end
 
   def test_errno_message
     Rlibmemcached::MemcachedServerSt.any_instance.stubs("cached_errno").returns(1)
     @cache.send(:check_return_code, Rlibmemcached::MEMCACHED_ERRNO, key)
   rescue Memcached::SystemError => e
-    assert_match /^Errno 1: "Operation not permitted". Key/, e.message
+    assert_match(/^Errno 1: "Operation not permitted". Key/, e.message)
   end
 
   # Stats
@@ -1119,7 +1119,8 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       noblock_cache.set key, "I'm big" * 1000000
     end
-    assert_raise( Memcached::ServerIsMarkedDead) do
+
+    assert_raise(Memcached::ServerIsMarkedDead) do
       @noblock_cache.set key, "I'm big" * 1000000
     end
   end
@@ -1160,7 +1161,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     # Hit first server on retry
@@ -1235,7 +1236,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     assert_nothing_raised do
@@ -1249,7 +1250,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     assert_nothing_raised do
@@ -1280,7 +1281,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     sleep(2)
@@ -1290,7 +1291,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
   ensure
     socket.close
@@ -1343,7 +1344,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     # Hit first server on retry
