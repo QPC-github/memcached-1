@@ -1114,16 +1114,14 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  unless RUBY_PLATFORM =~ /darwin/i # TODO: figure out why it doesn't raise on OSX. Newer Memcached?
-    def test_no_block_set_object_too_large
-      noblock_cache = Memcached.new(@servers, @noblock_options.merge(:noreply => false))
-      assert_nothing_raised do
-        noblock_cache.set key, "I'm big" * 1000000
-      end
+  def test_no_block_set_object_too_large
+    noblock_cache = Memcached.new(@servers, @noblock_options.merge(:noreply => false))
+    assert_nothing_raised do
+      noblock_cache.set key, "I'm big" * 1000000
+    end
 
-      assert_raise(Memcached::ServerIsMarkedDead) do
-        @noblock_cache.set key, "I'm big" * 1000000
-      end
+    assert_raise(Memcached::ServerIsMarkedDead) do
+      @noblock_cache.set key, "I'm big" * 1000000
     end
   end
 
