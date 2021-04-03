@@ -12,6 +12,13 @@ unless defined? UNIX_SOCKET_NAME
   memcached = ENV['MEMCACHED_COMMAND'] || 'memcached'
   system ">#{log}"
 
+  def run_command(cmd)
+    puts cmd
+    unless system(cmd)
+      puts "comamnd failed"
+    end
+  end
+
   # TCP memcached
   (43042..43046).each do |port|
     cmd = "#{memcached} #{verbosity} -U 0 -p #{port} >> #{log} 2>&1 &"

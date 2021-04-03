@@ -16,12 +16,16 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: Install libsasl2-dev
-        run: sudo apt-get install libsasl2-dev
+      - name: Install apt packages
+        run: sudo apt-get install libsasl2-dev memcached
       - name: Install dependencies
         run: bundle install
+      - name: Start Memcached
+        run: ruby test/setup.rb 
+      - name: Compile Gem
+        run: rake compile
       - name: Run test
-        run: rake
+        run: rake test
       - name: Install gem
         run: rake install
   platforms:
@@ -37,9 +41,15 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
+      - name: Install Memcached
+        run: brew install memcached
       - name: Install dependencies
         run: bundle install
+      - name: Start Memcached
+        run: ruby test/setup.rb 
+      - name: Compile Gem
+        run: rake compile
       - name: Run test
-        run: rake
+        run: rake test
       - name: Install gem
         run: rake install
