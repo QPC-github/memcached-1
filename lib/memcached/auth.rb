@@ -5,12 +5,12 @@ class Memcached
     end
   end
 
+  # Set the SASL credentials from the current options. If credentials aren't provided, try to get them from the environment.
   def set_credentials
-    # If credentials aren't provided, try to get them from the environment
-    if options[:credentials] != nil
-      username, password = options[:credentials]
-      check_return_code(Lib.memcached_set_sasl_auth_data(@struct, username, password))
+    if options[:credentials]
+      check_return_code(
+        Lib.memcached_set_sasl_auth_data(@struct, *options[:credentials])
+      )
     end
   end
 end
-
