@@ -431,8 +431,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised. Note that CAS may be buggy in memcached itself.
   # :retry_on_exceptions does not apply to this method
   def cas(keys, ttl=@default_ttl, decode=true)
-    raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
     tries ||= 0
+    raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
 
     if keys.is_a? Array
       # Multi CAS
